@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+
+# Env't Variables
+.env
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Data files
+data/
+!src/data/
+*.csv
+*.tsv
+*.xlsx
+*.json
+
+# IDEs / editors
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
