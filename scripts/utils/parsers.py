@@ -1,8 +1,8 @@
 import pandas as pd
 from ..constants import (
-    PARSE_TO_BOOL_COLS,
-    PARSE_TO_DATE_COLS,
-    PARSE_TO_NUMERIC_COLS,
+    BOOL_COLS,
+    DATE_COLS,
+    NUMERIC_COLS,
     OUTLIER_COLS,
     threashold,
 )
@@ -23,7 +23,7 @@ def _clean_date_column(series: pd.Series) -> pd.Series:
 
 def parse_date_columns(df: pd.DataFrame) -> pd.DataFrame:
     try:
-        for date_col in PARSE_TO_DATE_COLS:
+        for date_col in DATE_COLS:
             if date_col in df.columns:
                 df[date_col] = _clean_date_column(df[date_col])
         return df
@@ -33,7 +33,7 @@ def parse_date_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def parse_yes_no_cols(df: pd.DataFrame) -> pd.DataFrame:
     try:
-        for yes_no_col in PARSE_TO_BOOL_COLS:
+        for yes_no_col in BOOL_COLS:
             if yes_no_col in df.columns:
                 df[yes_no_col] = (
                     df[yes_no_col]
@@ -50,7 +50,7 @@ def parse_yes_no_cols(df: pd.DataFrame) -> pd.DataFrame:
 
 def parse_numeric_cols(df: pd.DataFrame) -> pd.DataFrame:
     try:
-        for numeric_col in PARSE_TO_NUMERIC_COLS:
+        for numeric_col in NUMERIC_COLS:
             if numeric_col in df.columns:
                 df[numeric_col] = pd.to_numeric(df[numeric_col], errors="coerce")
         return df

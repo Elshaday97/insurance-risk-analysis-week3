@@ -64,8 +64,8 @@ class Columns(Enum):
     TotalClaims = "TotalClaims"
 
 
-PARSE_TO_DATE_COLS = [Columns.TransactionMonth.value, Columns.VehicleIntroDate.value]
-PARSE_TO_BOOL_COLS = [
+DATE_COLS = [Columns.TransactionMonth.value, Columns.VehicleIntroDate.value]
+BOOL_COLS = [
     Columns.AlarmImmobiliser.value,
     Columns.TrackingDevice.value,
     Columns.WrittenOff.value,
@@ -74,7 +74,7 @@ PARSE_TO_BOOL_COLS = [
     Columns.CrossBorder.value,
 ]
 
-PARSE_TO_NUMERIC_COLS = [
+NUMERIC_COLS = [
     Columns.mmcode.value,
     Columns.RegistrationYear.value,
     Columns.Cylinders.value,
@@ -88,7 +88,6 @@ PARSE_TO_NUMERIC_COLS = [
     Columns.ExcessSelected.value,
     Columns.TotalPremium.value,
     Columns.TotalClaims.value,
-    Columns.NumberOfVehiclesInFleet.value,
 ]
 
 OUTLIER_COLS = [
@@ -107,4 +106,23 @@ NON_NEGATIVE_COLS = [
     Columns.TotalClaims.value,
     Columns.CapitalOutstanding.value,
     Columns.CustomValueEstimate.value,
+]
+
+CATEGORY_COLS = [
+    Columns.Bank.value,
+    Columns.AccountType.value,
+    Columns.Province.value,
+    Columns.MainCrestaZone.value,
+    Columns.SubCrestaZone.value,
+    Columns.ItemType.value,
+    Columns.VehicleType.value,
+    Columns.NewVehicle.value,
+    Columns.TermFrequency.value,
+    Columns.CoverCategory.value,
+    Columns.CoverType.value,
+    Columns.CoverGroup.value,
+    Columns.Section.value,
+    Columns.Product.value,
+    Columns.StatutoryClass.value,
+    Columns.StatutoryRiskType.value,
 ]
