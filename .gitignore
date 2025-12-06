@@ -13,7 +13,12 @@ venv/
 .ipynb_checkpoints/
 
 # Data files
-data/
+!data/**/*.dvc
+data/raw/*.csv
+data/raw/MachineLearningRating_v3 2.txt
+data/processed/*.csv
+
+
 !src/data/
 *.csv
 *.tsv
