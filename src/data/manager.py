@@ -9,6 +9,7 @@ from scripts.constants import (
     NON_NEGATIVE_COLS,
     Columns,
 )
+from tabulate import tabulate
 from scripts import parsers
 
 
@@ -30,10 +31,6 @@ class DataManager:
             )
             sep = None if load_clean else "|"
             self.df = pd.read_csv(path, sep=sep, low_memory=False)
-
-            print("Basic Data Info:\n")
-            self.df.info()
-
             self.save_to_csv(
                 df=self.df,
                 file_name=self.raw_csv_data_file_name,

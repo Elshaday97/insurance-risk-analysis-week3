@@ -85,7 +85,6 @@ NUMERIC_COLS = [
     Columns.CapitalOutstanding.value,
     Columns.SumInsured.value,
     Columns.CalculatedPremiumPerTerm.value,
-    Columns.ExcessSelected.value,
     Columns.TotalPremium.value,
     Columns.TotalClaims.value,
 ]
