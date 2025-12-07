@@ -63,7 +63,7 @@ def _detect_outliers(series: pd.Series):
     Q3 = series.quantile(0.75)
     IQR = Q3 - Q1
     lower_bound = Q1 - threashold * IQR
-    upper_bound = Q3 - threashold * IQR
+    upper_bound = Q3 + threashold * IQR
     outliers = (series < lower_bound) | (series > upper_bound)
 
     return outliers

@@ -9,6 +9,7 @@ from scripts.constants import (
     NON_NEGATIVE_COLS,
     Columns,
 )
+from tabulate import tabulate
 from scripts import parsers
 
 
