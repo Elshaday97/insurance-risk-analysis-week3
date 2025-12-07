@@ -29,16 +29,21 @@ class DataManager:
                 else self.raw_data_path / self.raw_data_file_name
             )
             sep = None if load_clean else "|"
-            self.df = pd.read_csv(path, sep=sep, low_memory=False)
+            self.df = (
+                pd.read_csv(path, index_col=0)
+                if load_clean
+                else pd.read_csv(path, sep=sep, low_memory=False)
+            )
 
             print("Basic Data Info:\n")
             self.df.info()
 
-            self.save_to_csv(
-                df=self.df,
-                file_name=self.raw_csv_data_file_name,
-                file_path=self.raw_data_path,
-            )
+            if not load_clean:
+                self.save_to_csv(
+                    df=self.df,
+                    file_name=self.raw_csv_data_file_name,
+                    file_path=self.raw_data_path,
+                )
             print("Data loaded!")
         except ValueError as e:
             print(f"Unable to load data: {e}")
