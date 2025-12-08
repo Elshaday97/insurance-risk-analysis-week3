@@ -124,4 +124,24 @@ CATEGORY_COLS = [
     Columns.Product.value,
     Columns.StatutoryClass.value,
     Columns.StatutoryRiskType.value,
+    Columns.Gender.value,
+    Columns.make.value,
+    Columns.Model.value,
+]
+
+PREDICTION_COLS = [
+    Columns.Province.value,
+    Columns.Gender.value,
+    Columns.make.value,
+    Columns.Model.value,
+    Columns.RegistrationYear.value,
+    Columns.Cylinders.value,
+    Columns.cubiccapacity.value,
+    Columns.kilowatts.value,
+    Columns.NumberOfDoors.value,
+    Columns.CustomValueEstimate.value,
+    Columns.SumInsured.value,
+    Columns.CalculatedPremiumPerTerm.value,
+    Columns.TotalPremium.value,
+    Columns.TotalClaims.value,
 ]
