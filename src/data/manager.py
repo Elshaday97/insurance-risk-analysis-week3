@@ -31,7 +31,9 @@ class DataManager:
             )
             sep = None if load_clean else "|"
             self.df = (
-                pd.read_csv(path, index_col=0)
+                pd.read_csv(
+                    path, index_col=0, parse_dates=[Columns.TransactionMonth.value]
+                )
                 if load_clean
                 else pd.read_csv(path, sep=sep, low_memory=False)
             )
