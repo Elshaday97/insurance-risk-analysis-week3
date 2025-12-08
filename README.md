@@ -6,64 +6,62 @@ A comprehensive data pipeline and exploratory analysis project for a large-scale
 
 ## Repository Structure
 
-```txt
+```text
 ├── data/
-│   ├── processed
-│   ├── raw
+│   ├── raw/
+│   └── processed/
 ├── notebooks/
 │   ├── insurance_eda.ipynb
+│   ├── predictive_models.ipynb      # claim probability + severity models
+│   └── ab_hypothesis_testing.ipynb   # statistical risk-difference tests
 ├── scripts/
-│   ├── __init__.py
 │   ├── constants.py
-│   ├──utils/
-│   │   └── parser.py
+│   └── utils/
+│       └── parser.py
 ├── src/
 │   ├── data/
-│   │   └── __init__.py
 │   │   └── manager.py
+│   ├── preparer.py
+│   └── modeling.py                     # ClaimClassifier & ClaimSeverityRegressor (RF, XGBoost, Linear)
 ├── tests/
+├── requirements.txt
 └── README.md
 ```
 
 ## Key Features
 
-- **Robust DataManager** (`src/data/manager.py`)
-
-  - Loads raw pipe-separated file or cleaned CSV
-  - Comprehensive cleaning pipeline (missing values, dtype conversion, outlier flagging, duplicate removal, non-negative enforcement)
-  - One-line clean data loading: `dm.load_data()`
-  - Automatically saves cleaned dataset
-
-- **Smart Missing Value Handling**
-
-  - Critical columns → drop rows
-  - Categorical → mode imputation
-  - Numeric specs → median
-  - Logical defaults (0, False, "Unknown")
-
-- **Outlier Detection & Flagging**
-
-  - Adds boolean flags: `Outlier_TotalPremium`, `Outlier_TotalClaims`, etc.
-
-- **EDA Notebook**
-  - Full statistical summary
-  - Distributions, correlations, time-series trends
-  - Ready for modeling iteration
+| Component                         | Description                                                                                                                         |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| DataManager (src/data/manager.py) | One-liner dm.load_csv(load_clean=True) → fully cleaned DataFrame with outlier flags, correct dtypes, no duplicates                  |
+| Smart imputation & cleaning       | Critical columns → drop, categorical → mode, numeric specs → median, logical defaults                                               |
+| Outlier flagging                  | Boolean columns Outlier_TotalPremium, Outlier_TotalClaims, Outlier_CustomValueEstimate                                              |
+| DataPreparer (src/preparer.py)    | Ready-made preprocessors for linear regression (log-transform target), tree-based models and binary classification                  |
+| Modeling (src/modeling.py)        | • ClaimClassifier – Random Forest (balanced classes) • ClaimSeverityRegressor – XGBoost / RF / Linear • Built-in SHAP summary plots |
+| Predictive Models Notebook        | Trains & evaluates claim-probability (ROC-AUC ≈ 0.68) and claim-severity models (XGBoost best RMSE ≈ 34k)                           |
+| A/B Hypothesis Testing Notebook   | Chi-square & t-tests on risk differences across provinces, postal codes and gender (all null hypotheses failed to be rejected)      |
+| Interpretability                  | SHAP value computation + summary plots for tree-based models                                                                        |
 
 ## Quick Start
 
-```bash
-# Clone the repo
-git clone git@github.com:Elshaday97/insurance-risk-analysis-week3.git
-cd insurance-risk-analysis
+### Clone the repository
 
-# Create virtual environment
+git clone https://github.com/Elshaday97/insurance-risk-analysis-week3.git
+cd insurance-risk-analysis-week3
+
+### Set up environment
+
 python -m venv venv
-source venv/bin/activate    # Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Run the EDA notebook
-jupyter notebook notebooks/insurance_eda.ipynb
-```
+### Explore the data
+
+jupyter lab notebooks/insurance_eda.ipynb
+
+### Run statistical hypothesis tests
+
+jupyter lab notebooks/ab_hypothesis_testing.ipynb
+
+### Run predictive modeling
+
+jupyter lab notebooks/predictive_models.ipynb
