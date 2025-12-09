@@ -89,18 +89,18 @@ class DataPreparer:
         X = subset_df[feature_cols]
         return X, y, preprocessor
 
-    def prepare_for_classification(self, df: pd.DataFrame, target_col: str):
+    def prepare_for_classification(self, df: pd.DataFrame, classifier_col: str):
         """
         Prepares data for binary classification (Claim vs No Claim).
         """
         subset_df = df[self.prediction_cols].copy()
 
         target_bin = "Claimed"
-        subset_df[target_bin] = (subset_df[target_col] > 0).astype(int)
+        subset_df[target_bin] = (subset_df[classifier_col] > 0).astype(int)
 
         # 3. Separate Features and Target
         # Drop the original continuous target and the new binary target from features
-        X = subset_df.drop(columns=[target_col, target_bin])
+        X = subset_df.drop(columns=[classifier_col, target_bin])
         y = subset_df[target_bin]
 
         # 4. Define Preprocessor (Identify Numeric/Categorical)
