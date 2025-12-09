@@ -1,6 +1,7 @@
 # src/modeling.py
 import pandas as pd
 import numpy as np
+from scripts.constants import MODEL_TYPES
 import matplotlib.pyplot as plt
 import shap
 from sklearn.linear_model import LinearRegression
@@ -21,41 +22,79 @@ from sklearn.metrics import (
 
 
 class ClaimClassifier:
-    def __init__(self, random_state=42):
+
+    def __init__(self, model_type=MODEL_TYPES.XGBOOST.value, random_state=42):
         self.random_state = random_state
         self.model = None
         self.pipeline = None
+        self.model_type = model_type
+
+    def _get_classifier(self):
+        if self.model_type == MODEL_TYPES.XGBOOST.value:
+            return xgb.XGBClassifier(
+                n_estimators=200,
+                max_depth=6,
+                learning_rate=0.1,
+                eval_metric="logloss",
+                random_state=self.random_state,
+                n_jobs=-1,
+                use_label_encoder=False,
+                objective="binary:logistic",
+            )
+        elif self.model_type == MODEL_TYPES.RANDOM_FOREST.value:
+            return RandomForestClassifier(
+                n_estimators=300,
+                max_depth=12,
+                random_state=self.random_state,
+                n_jobs=-1,
+            )
+        elif self.model_type == MODEL_TYPES.LINEAR_REGRESSION.value:
+            return LinearRegression()
+        else:
+            raise ValueError(f"Unknown model_type: {self.model_type}")
 
     def train(self, X_train, y_train, preprocessor):
-        """Initializes and trains the Random Forest Classifier pipeline."""
-        self.model = RandomForestClassifier(
-            n_estimators=100,
-            class_weight="balanced",
-            random_state=self.random_state,
-            n_jobs=-1,
-        )
+        """Initializes and trains the Classifier pipeline."""
+        model = self._get_classifier()
 
         self.pipeline = Pipeline(
-            [("preprocessor", preprocessor), ("classifier", self.model)]
+            [("preprocessor", preprocessor), ("classifier", model)]
         )
 
-        print("Training Random Forest Classifier...")
+        print(f"Training {self.model_type} Classifier...")
         self.pipeline.fit(X_train, y_train)
         print("Training Complete.")
 
     def evaluate(self, X_test, y_test):
         """Predicts and prints evaluation metrics."""
-        if not self.pipeline:
+        if self.pipeline is None:
             raise Exception("Model not trained yet. Call train() first.")
 
         y_pred = self.pipeline.predict(X_test)
-        y_proba = self.pipeline.predict_proba(X_test)[:, 1]
+
+        # Extract probabilities safely
+        final = self.pipeline.named_steps["classifier"]
+
+        if hasattr(final, "predict_proba"):
+            y_proba = final.predict_proba(
+                self.pipeline.named_steps["preprocessor"].transform(X_test)
+            )[:, 1]
+
+        elif hasattr(final, "decision_function"):
+            y_proba = final.decision_function(
+                self.pipeline.named_steps["preprocessor"].transform(X_test)
+            )
+
+        else:
+            raise Exception(
+                f"Model {self.model_type} does not support probability estimation."
+            )
 
         metrics = {
             "Accuracy": accuracy_score(y_test, y_pred),
-            "Precision": precision_score(y_test, y_pred),
-            "Recall": recall_score(y_test, y_pred),
-            "F1 Score": f1_score(y_test, y_pred),
+            "Precision": precision_score(y_test, y_pred, zero_division=0),
+            "Recall": recall_score(y_test, y_pred, zero_division=0),
+            "F1 Score": f1_score(y_test, y_pred, zero_division=0),
             "ROC-AUC": roc_auc_score(y_test, y_proba),
         }
 
@@ -111,7 +150,8 @@ class ClaimClassifier:
 
 
 class ClaimSeverityRegressor:
-    def __init__(self, model_type="xgboost", random_state=42):
+
+    def __init__(self, model_type=MODEL_TYPES.XGBOOST.value, random_state=42):
         """
         Args:
             model_type (str): 'xgboost', 'random_forest', or 'linear'
@@ -123,7 +163,7 @@ class ClaimSeverityRegressor:
         self.is_log_transformed = False  # specific for Linear Regression path
 
     def _get_regressor(self):
-        if self.model_type == "xgboost":
+        if self.model_type == MODEL_TYPES.XGBOOST.value:
             return xgb.XGBRegressor(
                 n_estimators=100,
                 max_depth=6,
@@ -133,14 +173,14 @@ class ClaimSeverityRegressor:
                 n_jobs=-1,
                 base_score=0.5,
             )
-        elif self.model_type == "random_forest":
+        elif self.model_type == MODEL_TYPES.RANDOM_FOREST.value:
             return RandomForestRegressor(
                 n_estimators=100,
                 max_depth=10,
                 random_state=self.random_state,
                 n_jobs=-1,
             )
-        elif self.model_type == "linear":
+        elif self.model_type == MODEL_TYPES.LINEAR_REGRESSION.value:
             return LinearRegression()
         else:
             raise ValueError(f"Unknown model_type: {self.model_type}")
@@ -193,7 +233,7 @@ class ClaimSeverityRegressor:
 
     def explain_model(self, X_test, sample_size=100):
         """Generates SHAP plots for the regressor."""
-        if self.model_type == "linear":
+        if self.model_type == MODEL_TYPES.LINEAR_REGRESSION.value:
             print(
                 "SHAP explanation skipped for Linear Model (Focus on Coefficients instead)."
             )

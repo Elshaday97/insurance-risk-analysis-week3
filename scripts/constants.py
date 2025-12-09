@@ -145,3 +145,9 @@ PREDICTION_COLS = [
     Columns.TotalPremium.value,
     Columns.TotalClaims.value,
 ]
+
+
+class MODEL_TYPES(Enum):
+    XGBOOST = "xgboost"
+    RANDOM_FOREST = "random_forest"
+    LINEAR_REGRESSION = "linear"
